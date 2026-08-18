@@ -10,8 +10,8 @@
  * Formato esperado (tudo é opcional; o que faltar entra vazio):
  *
  *   {
- *     "expenses":       [{ "id": 1, "date": "2026-08-07", "title": "Aluguel",
- *                          "category": "Moradia", "amount": 1150,
+ *     "expenses":       [{ "id": 1, "date": "2026-01-05", "title": "Conta de luz",
+ *                          "category": "Contas Fixas", "amount": 180.5,
  *                          "paymentMethod": "Pix", "observation": "" }],
  *     "debts":          [{ "id": 1, "personId": 1, "direction": "a_receber",
  *                          "title": "Ingresso", "amount": 200, "paidAmount": 0,
@@ -31,7 +31,7 @@ const destino = path.join(raiz, "appsscript", "DadosIniciais.gs");
 
 const candidatos = process.argv[2]
   ? [path.resolve(process.argv[2])]
-  : [path.join(raiz, "dados", "importar.json"), path.join(raiz, "dados", "db-antigo.json")];
+  : [path.join(raiz, "dados", "importar.json")];
 
 const origem = candidatos.find((caminho) => fs.existsSync(caminho));
 
