@@ -46,17 +46,26 @@ console.log("  [1/3] Criando a Planilha Google e o projeto do Apps Script...");
 const criacao = rodarClasp(["create", "--type", "sheets", "--title", TITULO, "--rootDir", "appsscript"]);
 conferirErrosConhecidos(criacao.saida);
 
+// O clasp grava o .clasp.json DENTRO da rootDir; o resto das ferramentas
+// (e o próprio clasp, nos comandos seguintes) procura na raiz do projeto.
+const criadoNaSubpasta = path.join(raiz, "appsscript", ".clasp.json");
+if (fs.existsSync(criadoNaSubpasta) && !fs.existsSync(arquivoClasp)) {
+  fs.renameSync(criadoNaSubpasta, arquivoClasp);
+}
+
 if (!fs.existsSync(arquivoClasp)) {
   process.stdout.write(criacao.saida);
   falhar("Não consegui criar o projeto. Veja a mensagem do clasp acima.");
 }
 
-const linkPlanilha = (criacao.saida.match(/https:\/\/(?:drive|docs)\.google\.com\/\S+/) || [])[0] || "";
-const linkEditor = (criacao.saida.match(/https:\/\/script\.google\.com\/d\/\S+/) || [])[0] || "";
+const config = JSON.parse(fs.readFileSync(arquivoClasp, "utf-8"));
+const idPlanilha = Array.isArray(config.parentId) ? config.parentId[0] : config.parentId;
 
-// O clasp cria um Código.js de exemplo que conflita com os arquivos do projeto.
-const sobra = path.join(raiz, "appsscript", "Código.js");
-if (fs.existsSync(sobra)) fs.rmSync(sobra);
+const linkPlanilha = idPlanilha ? `https://docs.google.com/spreadsheets/d/${idPlanilha}/edit` : "";
+const linkEditor = config.scriptId ? `https://script.google.com/d/${config.scriptId}/edit` : "";
+
+// O arquivo de exemplo que o clasp cria fica só no lado do Google e some no
+// primeiro `push --force`, que substitui o remoto pelos arquivos daqui.
 
 // --- 4. envia o código ------------------------------------------------------
 
