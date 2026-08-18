@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@media (prefers-color-scheme: dark) {
+  :root { color-scheme: dark; }
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  @apply bg-surface-page text-ink-primary dark:bg-surface-page-dark dark:text-ink-primary-dark;
+  font-feature-settings: "tnum" 0;
+  /* deixa o "puxar para atualizar" do app no comando, sem o do navegador junto */
+  overscroll-behavior-y: contain;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* barrinha do carregamento inicial */
+@keyframes deslizar {
+  0% { transform: translateX(-110%); }
+  100% { transform: translateX(320%); }
+}
+
+::selection {
+  background: #2a78d633;
+}
+
+@layer components {
+  .input {
+    @apply w-full rounded-lg border border-line-hairline dark:border-line-hairline-dark bg-surface dark:bg-surface-dark px-3 py-2 text-sm text-ink-primary dark:text-ink-primary-dark outline-none transition-colors focus:border-brand dark:focus:border-brand-dark;
+  }
+  .btn-primary {
+    @apply rounded-lg bg-brand dark:bg-brand-dark px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60;
+  }
+  .btn-secondary {
+    @apply rounded-lg border border-line-hairline dark:border-line-hairline-dark px-4 py-2 text-sm font-medium text-ink-secondary dark:text-ink-secondary-dark hover:bg-surface-page dark:hover:bg-white/5;
+  }
+  .card {
+    @apply rounded-xl border border-line-hairline dark:border-line-hairline-dark bg-surface dark:bg-surface-dark;
+  }
+}
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: white !important; color: black !important; }
+  .print-area { box-shadow: none !important; }
+}

@@ -1,0 +1,16 @@
+node_modules/
+client/node_modules/
+client/dist/
+
+# Ligação com o SEU projeto do Apps Script (contém o ID pessoal)
+.clasp.json
+.clasprc.json
+
+# Gerados na sua máquina — e os dados são seus, não do repositório
+appsscript/Index.html
+appsscript/DadosIniciais.gs
+dados/
+
+*.log
+.DS_Store
+Thumbs.db

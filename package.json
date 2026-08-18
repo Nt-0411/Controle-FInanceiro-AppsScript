@@ -1,0 +1,20 @@
+{
+  "name": "controle-financeiro",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Controle financeiro pessoal que roda no Google Apps Script, com a Planilha Google como banco de dados",
+  "license": "MIT",
+  "scripts": {
+    "instalar": "npm install --prefix client && node tools/instalar.mjs",
+    "login": "clasp login",
+    "publicar": "node tools/publicar.mjs",
+    "dev": "npm run dev --prefix client",
+    "build": "npm run build --prefix client && node tools/build-appsscript.mjs",
+    "push": "npm run build && node tools/enviar.mjs",
+    "dados": "node tools/gerar-dados-iniciais.mjs",
+    "abrir": "clasp open --webapp"
+  },
+  "devDependencies": {
+    "@google/clasp": "2.4.2"
+  }
+}
