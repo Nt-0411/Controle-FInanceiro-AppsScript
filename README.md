@@ -188,7 +188,8 @@ se algo der errado, está em **[`bot/README.md`](bot/README.md)**. Em resumo:
 
 1. **Cloudflare:** criar o Worker e o banco com `npx wrangler deploy`.
 2. **Telegram:** criar o bot no @BotFather e guardar o token.
-3. **Segredos:** gravar o token e uma senha gerada na hora no Worker.
+3. **Segredos:** gravar o token com `npm run token`, que confere com o Telegram e
+   não mostra nada na tela, e uma senha gerada na hora.
 4. **Publicar** o Worker e **enviar** o `Bot.gs` ao Apps Script.
 5. **Ligar:** colar o endereço do Worker e a senha nas propriedades do script e
    rodar `ligarBot` no editor.

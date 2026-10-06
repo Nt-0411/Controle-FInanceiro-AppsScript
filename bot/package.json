@@ -8,7 +8,8 @@
     "deploy": "wrangler deploy",
     "tipos": "wrangler types",
     "checar": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "token": "node scripts/gravar-token.mjs"
   },
   "devDependencies": {
     "typescript": "^7.0.2",

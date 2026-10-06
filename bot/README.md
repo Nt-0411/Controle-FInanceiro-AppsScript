@@ -89,11 +89,17 @@ São três, e nenhum vai no código nem no `wrangler.jsonc`:
 > de a colagem entrar, o segredo fica errado sem nenhum aviso, e o erro só aparece no passo 6. Cole
 > **uma vez só**. Onde der, entregue o valor direto ao wrangler, como nos comandos abaixo.
 
-**O token.** Rode o comando, cole o token uma vez e dê Enter:
+**O token.** Copie o token, ou a mensagem inteira do BotFather, e rode:
 
 ```bash
-npx wrangler secret put TELEGRAM_TOKEN
+npm run token
 ```
+
+O script acha o token no que você copiou e confere com o Telegram se ele vale. Depois mostra o @ do
+seu bot, grava o token no Worker sem passar pelo prompt e limpa a área de transferência. O token não
+aparece na tela em momento nenhum. No Linux, ele precisa do `xclip` ou do `wl-clipboard`.
+
+Prefere o jeito manual? Rode `npx wrangler secret put TELEGRAM_TOKEN` e cole o token uma vez só.
 
 **A senha do Apps Script.** Este comando gera uma senha aleatória, entrega ao wrangler e mostra o
 valor uma vez, para você copiar:
@@ -190,8 +196,8 @@ Para ver ao vivo o que chega ao Worker, rode `npx wrangler tail` e mande a mensa
 - "remetente fora da lista": o `TELEGRAM_USUARIO_PERMITIDO` está errado.
 - "O Telegram recusou sendMessage: 401": o token está errado.
 
-**O token vazou?** No @BotFather, `/revoke` gera outro. Grave o novo em `TELEGRAM_TOKEN` e rode o
-`ligarBot`.
+**O token vazou?** No @BotFather, `/revoke` gera outro. Copie o novo, rode `npm run token` e depois
+o `ligarBot`.
 
 ## No dia a dia
 
@@ -200,6 +206,7 @@ npm test              # interpretação, segredos, Telegram e o Bot.gs com o Goo
 npm run checar        # tipos
 npm run dev           # Worker local com banco local; a IA não roda sem login
 npm run deploy        # publica
+npm run token         # grava um token novo, lido da área de transferência
 npx wrangler tail     # log ao vivo do Worker publicado
 ```
 
