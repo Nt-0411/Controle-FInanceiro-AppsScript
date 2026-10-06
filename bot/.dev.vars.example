@@ -1,0 +1,6 @@
+# Só para testar com `npm run dev`: copie para .dev.vars (que fica fora do git).
+# Em produção cada valor vai por `npx wrangler secret put NOME`.
+# Vazio: as respostas aparecem no terminal em vez de ir para o Telegram.
+TELEGRAM_TOKEN=
+TELEGRAM_USUARIO_PERMITIDO=123456789
+SEGREDO_APPS_SCRIPT=teste-local

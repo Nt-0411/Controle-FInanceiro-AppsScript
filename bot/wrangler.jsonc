@@ -1,0 +1,38 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "controle-financeiro-bot",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-30",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Só o endereço fixo em workers.dev; nada de URL por versão.
+  "workers_dev": true,
+  "preview_urls": false,
+
+  "observability": {
+    "enabled": true,
+    "logs": { "head_sampling_rate": 1 }
+  },
+
+  // Workers AI roda sempre na nuvem, até no `wrangler dev`, e gasta da cota
+  // grátis diária (10.000 neurons; um gasto consome uns 47).
+  "ai": { "binding": "AI" },
+
+  // Sem database_id: o primeiro `wrangler deploy` cria o banco sozinho.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "controle-financeiro-bot",
+      "migrations_dir": "migrations"
+    }
+  ]
+
+  // Segredos: TELEGRAM_TOKEN, TELEGRAM_USUARIO_PERMITIDO e SEGREDO_APPS_SCRIPT.
+  // Valores via `npx wrangler secret put NOME`, nunca aqui: existe um espelho
+  // público deste repositório. O README diz o que é cada um.
+  //
+  // Não use "secrets.required": com ele o wrangler recusa o primeiro deploy (o
+  // Worker não existe, então `secret put` também não roda). Sem os segredos o
+  // Worker sobe fechado e recusa tudo. Os nomes para o `wrangler types` saem
+  // do .dev.vars (copie o .dev.vars.example).
+}

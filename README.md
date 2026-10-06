@@ -11,7 +11,8 @@ Planilha Google sua.
 - **Seus dados, legíveis** — é uma planilha comum; abra e edite à mão quando quiser
 
 Não há chave de API, servidor de terceiro nem banco de dados para contratar. Você
-instala na *sua* conta e ninguém além de você enxerga nada.
+instala na *sua* conta e ninguém além de você enxerga nada. A única exceção é o
+[bot do Telegram](#bot-do-telegram-opcional), que é opcional.
 
 ---
 
@@ -123,6 +124,81 @@ edita pelo Sheets.
   - **Baixar CSV** — pronto para o Excel brasileiro (`;` e vírgula decimal)
   - **Imprimir / PDF**
 - **Ajustes** — categorias, formas de pagamento, pessoas e sincronização.
+- **Bot do Telegram (opcional)** — anote gasto por mensagem ou nota de voz, sem
+  abrir o app. Veja abaixo.
+
+---
+
+## Bot do Telegram (opcional)
+
+Para anotar um gasto sem abrir o app, mande uma mensagem para um bot seu no
+Telegram:
+
+```
+você:  mercado 40 débito
+bot:   ✅ Anotado:
+       • Mercado · R$ 40,00 · Débito · Mercado
+```
+
+Em até um minuto o gasto aparece no app e na planilha, com a observação
+"Pelo Telegram".
+
+### O que ele entende
+
+| Você manda | Vira |
+| --- | --- |
+| `mercado 40 débito` | um gasto de hoje, no débito |
+| `uber 23,50 pix ontem` | um gasto de ontem, no Pix |
+| `padaria 12 no dinheiro e farmácia 35,90 no crédito` | dois gastos, cada um com a sua forma de pagamento |
+| uma nota de voz curta | o mesmo, a partir do áudio transcrito |
+| `/help` | exemplos, as suas categorias e as suas formas de pagamento |
+
+- **Categoria e forma de pagamento** saem das listas do seu app, então o bot nunca
+  inventa uma nova. Para escolher a categoria, é só dizer o nome dela na frase.
+- **Data:** se a frase não fala em data ("ontem", "dia 3", "sexta", "03/10"), o
+  gasto é de hoje.
+- **Correção:** o bot não muda um gasto já anotado. Para corrigir, edite no app.
+
+### Como funciona por dentro
+
+```
+  Telegram ──▶ Worker na Cloudflare ──▶ fila (banco D1)
+                │  confere se a mensagem veio do Telegram e de você
+                │  entende a frase com IA (Workers AI)
+                │  responde ✅ na hora
+                ▼
+  Apps Script, a cada minuto ──▶ busca a fila ──▶ grava na Planilha
+```
+
+O bot é a **única parte que sai da conta Google**: um Worker grátis da Cloudflare,
+que usa a IA da própria Cloudflare. Mesmo assim, ele nunca toca na planilha nem
+chama o Google. Quem busca os gastos e grava é o Apps Script, pelo mesmo caminho do
+app. Por isso:
+
+- o app continua publicado como "somente eu";
+- só o **seu** usuário do Telegram consegue anotar, e o bot ignora quem mais
+  escrever;
+- nenhuma senha fica no código. Os três segredos do bot moram no próprio Worker.
+
+### Como ligar
+
+Você precisa de uma conta no Telegram, de uma conta grátis na Cloudflare e de uns
+15 minutos. O passo a passo completo, com o que aparece em cada etapa e o que fazer
+se algo der errado, está em **[`bot/README.md`](bot/README.md)**. Em resumo:
+
+1. **Cloudflare:** criar o Worker e o banco com `npx wrangler deploy`.
+2. **Telegram:** criar o bot no @BotFather e guardar o token.
+3. **Segredos:** gravar o token e uma senha gerada na hora no Worker.
+4. **Publicar** o Worker e **enviar** o `Bot.gs` ao Apps Script.
+5. **Ligar:** colar o endereço do Worker e a senha nas propriedades do script e
+   rodar `ligarBot` no editor.
+6. **Seu ID:** tocar em **Começar** no bot e gravar o número que ele mostra.
+
+### Custo
+
+Zero. A API de bots do Telegram é grátis, e a Cloudflare dá 10.000 "neurons" de IA
+por dia; um gasto consome uns 47. No plano grátis, passar da cota dá erro, não
+cobrança.
 
 ---
 
@@ -194,7 +270,9 @@ ajustar a interface, não para uso real.
 │  ├─ Relatorios.gs      relatório mensal, tendência e a aba Relatório
 │  ├─ Normalizacao.gs    conserta o que foi digitado à mão
 │  ├─ Sincronizacao.gs   revisão, gatilho onChange e menu da planilha
-│  └─ Importacao.gs      importação única de dados externos
+│  ├─ Importacao.gs      importação única de dados externos
+│  └─ Bot.gs             busca os gastos do bot do Telegram a cada minuto
+├─ bot/                  bot do Telegram: Worker da Cloudflare (opcional)
 ├─ client/               interface React + Vite + Tailwind
 └─ tools/                build, envio e publicação
 ```

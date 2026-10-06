@@ -6,6 +6,10 @@ client/dist/
 .clasp.json
 .clasprc.json
 
+# Bot: segredos de teste local e o banco que o `wrangler dev` cria
+bot/.dev.vars
+bot/.wrangler/
+
 # Gerados na sua máquina — e os dados são seus, não do repositório
 appsscript/Index.html
 appsscript/DadosIniciais.gs
