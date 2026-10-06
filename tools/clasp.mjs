@@ -13,14 +13,15 @@ import { fileURLToPath } from "node:url";
 
 export const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-const ehWindows = process.platform === "win32";
-const binario = path.join(raiz, "node_modules", ".bin", ehWindows ? "clasp.cmd" : "clasp");
+// O clasp e o npm rodam pelo próprio node, sem shell. Com `shell: true`, o jeito
+// de rodar os .cmd no Windows, o Node junta os argumentos sem aspas: "atualizado
+// em 06/10" virava três argumentos, e a implantação ficava só com "atualizado".
+const clasp = path.join(raiz, "node_modules", "@google", "clasp", "build", "src", "index.js");
 
 export function rodarClasp(argumentos, opcoes = {}) {
-  const execucao = spawnSync(binario, argumentos, {
+  const execucao = spawnSync(process.execPath, [clasp, ...argumentos], {
     cwd: raiz,
     encoding: "utf-8",
-    shell: ehWindows,
     ...opcoes,
   });
   const saida = `${execucao.stdout || ""}${execucao.stderr || ""}`;
@@ -28,7 +29,11 @@ export function rodarClasp(argumentos, opcoes = {}) {
 }
 
 export function rodarNpm(argumentos) {
-  return spawnSync("npm", argumentos, { cwd: raiz, stdio: "inherit", shell: ehWindows });
+  // Chamado por `npm run`, o npm diz em npm_execpath onde está o próprio script.
+  const npm = process.env.npm_execpath;
+  if (npm) return spawnSync(process.execPath, [npm, ...argumentos], { cwd: raiz, stdio: "inherit" });
+  // Fora dele, vale o npm do PATH. Os argumentos daqui são fixos e sem espaço.
+  return spawnSync(["npm", ...argumentos].join(" "), { cwd: raiz, stdio: "inherit", shell: true });
 }
 
 export function falhar(titulo, passos = []) {
